@@ -6,7 +6,7 @@
 /*   By: akatfi <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/06 11:37:55 by akatfi            #+#    #+#             */
-/*   Updated: 2023/06/09 21:27:29 by akatfi           ###   ########.fr       */
+/*   Updated: 2023/06/14 21:20:30 by akatfi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,40 +42,53 @@ void	ft_printf(char *str, char *s)
 	}
 }
 
-void	ft_exit2(int i, char **ext)
+void	ft_exit2(int i, char **ext, int show)
 {
+	while (ext[i])
+		i++;
 	if (i > 2)
 	{
-		write(2, "exit\nexit: too many arguments\n", 30);
+		if (show == 1)
+			write(2, "exit\n", 5);
+		if (show == 0)
+		{
+			write(2, "exit: too many arguments\n", 25);
+			exit(1);
+		}
 		*g_status = 256;
 		return ;
 	}
-	write(1, "exit\n", 5);
+	if (show == 1)
+		write(1, "exit\n", 5);
 	exit(ft_atoi(ext[1]));
 }
 
-void	ft_exit(char **ext)
+void	ft_exit(char **ext, int show)
 {
 	int	i;
 
 	if (!ext[1])
 	{
-		write(1, "exit\n", 5);
+		if (show == 1)
+			write(1, "exit\n", 5);
 		exit(WEXITSTATUS(*g_status));
 	}
 	i = -1;
+	if (ext[1][0] == '-' || ext[1][0] == '+')
+		i++;
 	while (ext[1][++i])
 	{
 		if (!(ext[1][i] >= '0' && ext[1][i] <= '9') && ext[1][i] != ' ')
 		{
-			ft_printf("exit\nexit: %s: numeric argument required\n", ext[1]);
+			if (show == 1)
+				write(2, "exit\n", 5);
+			if (show == 0)
+				ft_printf("exit: %s: numeric argument required\n", ext[1]);
 			exit(255);
 		}
 	}
 	i = 1;
-	while (ext[i])
-		i++;
-	ft_exit2(i, ext);
+	ft_exit2(i, ext, show);
 }
 
 char	*to_lowor(char *s1)

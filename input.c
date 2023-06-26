@@ -3,21 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   input.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: moelkama <moelkama@student.42.fr>          +#+  +:+       +#+        */
+/*   By: akatfi <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/07 18:50:06 by moelkama          #+#    #+#             */
-/*   Updated: 2023/06/01 14:00:35 by moelkama         ###   ########.fr       */
+/*   Updated: 2023/06/15 19:43:51 by akatfi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
-
-t_pipe	*lastpipe(t_pipe *pipes)
-{
-	while (pipes && pipes->next)
-		pipes = pipes->next;
-	return (pipes);
-}
 
 t_pipe	*newpipe(void)
 {
@@ -28,6 +21,7 @@ t_pipe	*newpipe(void)
 		return (NULL);
 	pipe->in = -1;
 	pipe->out = -1;
+	pipe->here_doc = 0;
 	pipe->cmd = NULL;
 	pipe->next = NULL;
 	return (pipe);
@@ -47,7 +41,7 @@ int	openfile(char *file, int mode)
 	dir = opendir(file);
 	if (fd == -1 || (dir && mode != 0))
 		ft_putstr_fd(file, 2, 0);
-	if (!access(file, F_OK) || dir)
+	if (!access(file, F_OK) || dir || mode != 0)
 	{
 		if (mode != 0 && dir)
 			return (ft_putstr_fd(" : Is a directory", 2, 1), fd);
@@ -89,6 +83,22 @@ int	check_valid(t_pipe *ptr, char **arr, char **env, int i)
 	return (0);
 }
 
+void	get_fd(t_pipe *pipes, char **arr, int i, char *file)
+{
+	int	fd;
+
+	if (!ft_strcmp(arr[i], "<") && pipes->in != -2 && pipes->out != -2)
+	{
+		fd = openfile(file, 0);
+		if (pipes->here_doc == 0)
+			pipes->in = fd;
+	}
+	else if (!ft_strcmp(arr[i], ">") && pipes->in != -2 && pipes->out != -2)
+		pipes->out = openfile(file, 1);
+	else if (!ft_strcmp(arr[i], ">>") && pipes->in != -2 && pipes->out != -2)
+		pipes->out = openfile(file, 2);
+}
+
 void	get_files(t_pipe *pipes, char **arr, char **env, int i)
 {
 	char	*file;
@@ -103,15 +113,8 @@ void	get_files(t_pipe *pipes, char **arr, char **env, int i)
 		}
 		with_var = add_vars(arr[i + 1], env, 0, 0);
 		file = remove_quotes(with_var);
-		if (check_in(arr, i + 1) && !ft_strcmp(arr[i], "<")
-			&& pipes->in != -2 && pipes->out != -2)
-			pipes->in = openfile(file, 0);
-		else if (!ft_strcmp(arr[i], ">") && pipes->in != -2 && pipes->out != -2)
-			pipes->out = openfile(file, 1);
-		else if (!ft_strcmp(arr[i], ">>")
-			&& pipes->in != -2 && pipes->out != -2)
-			pipes->out = openfile(file, 2);
-		else if (!ft_strcmp(arr[i], "|"))
+		get_fd(pipes, arr, i, file);
+		if (!ft_strcmp(arr[i], "|"))
 			pipes = pipes->next;
 		free(with_var);
 		free(file);

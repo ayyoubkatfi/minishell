@@ -6,7 +6,7 @@
 /*   By: akatfi <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/03 16:30:39 by akatfi            #+#    #+#             */
-/*   Updated: 2023/06/09 21:41:29 by akatfi           ###   ########.fr       */
+/*   Updated: 2023/06/16 12:51:28 by akatfi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,8 +19,13 @@ char	*ft_return_str(char	*str)
 	char	*newpath;
 
 	j = 0;
-	while (str[j] && str[j] != '+' && str[j] != '=')
+	while (str[j])
+	{
+		if (str[j] == '=' || (str[j] == '+'
+				&& str[j + 1] != '+' && str[j + 1] == '='))
+			break ;
 		j++;
+	}
 	newpath = malloc(j + 1);
 	i = -1;
 	while (++i < j)
@@ -91,15 +96,18 @@ int	ft_check_ifadd(t_list **ptr, char *str)
 
 void	add_or_create2(t_list *head, char *var, t_list **ptr, char *export)
 {
+	char	*str;
+
 	while (head && !ft_check_ifadd(ptr, var))
 	{
 		if (ft_strcmp(var, head->var) == 0)
 		{
-			free(head->key);
+			str = head->key;
 			if (ft_check_export(export) == 2 && head->key)
 				head->key = ft_strcat(head->key, export);
 			else
 				head->key = ft_give_key(export);
+			free(str);
 			return ;
 		}
 		head = head->next;

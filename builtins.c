@@ -6,7 +6,7 @@
 /*   By: akatfi <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/24 11:09:07 by akatfi            #+#    #+#             */
-/*   Updated: 2023/06/10 15:31:41 by akatfi           ###   ########.fr       */
+/*   Updated: 2023/06/15 19:51:48 by akatfi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,7 @@ void	ft_get_env(char **env, t_list **ptr, int show)
 		get_var_key("OLDPWD=", ptr, 1);
 	while (head && show == 1)
 	{
-		if (head->key && head->var && head->key[0])
+		if (head->key && head->var)
 			printf("%s=%s\n", head->var, head->key);
 		head = head->next;
 	}
@@ -45,9 +45,9 @@ void	ft_unset(char **unset, t_list **ptr, int show)
 	i = 0;
 	while (unset[++i])
 	{
-		if (ft_check_unset(unset[i]))
+		if (!ft_check(unset[i]) || !ft_strcmp("_", unset[i]))
 		{
-			if (show == 1)
+			if (show == 1 && unset[i][0] != '_')
 			{
 				j = 1;
 				ft_printf("unset: `%s': not a valid identifier\n", unset[i]);
@@ -60,70 +60,43 @@ void	ft_unset(char **unset, t_list **ptr, int show)
 		exit(1);
 }
 
-void	ft_changepwd(char *path, t_list *pwd, t_list *head)
+void	ft_changeoldpwd(t_list	*head, char *pwd, char *oldpwd)
 {
-	int		i;
-	int		j;
-	char	**tab_dir;
-
-	i = -1;
-	j = 1;
-	tab_dir = ft_split(path, '/');
-	if (pwd->key)
-		head->key = ft_alloc(pwd->key);
-	while (ft_strcmp(".", path) && tab_dir[++i] && pwd)
-	{
-		if (ft_strcmp("..", tab_dir[i]) == 0)
-			pwd->key = ft_delete_dirname(pwd->key);
-		else
-		{
-			head = pwd;
-			path = ft_link("/", tab_dir[i]);
-			pwd->key = ft_link(pwd->key, path);
-			free(path);
-		}
-	}
-	ft_free_env(tab_dir);
-}
-
-void	ft_changeoldpwd(t_list	*head, char *path, t_list **ptr)
-{
-	t_list	*pwd;
-
 	while (head)
 	{
 		if (ft_strcmp(head->var, "PWD") == 0)
-			pwd = head;
+		{
+			if (head->key)
+				free(head->key);
+			head->key = ft_alloc(pwd);
+		}
 		else if (ft_strcmp(head->var, "OLDPWD") == 0 && pwd)
 		{
 			if (head->key)
 				free(head->key);
-			break ;
+			head->key = ft_alloc(oldpwd);
 		}
 		head = head->next;
 	}
-	if (ft_check_pwd(path, *ptr) != 0)
-	{
-		head->key = pwd->key;
-		pwd->key = ft_alloc(path);
-	}
-	else if (ft_check_pwd(path, *ptr) == 0)
-		ft_changepwd(path, pwd, head);
 }
 
 void	ft_cd(char *path, t_list **ptr, int show)
 {
 	t_list	*head;
+	char	oldpwd[OPEN_MAX];
+	char	pwd[OPEN_MAX];
 
 	head = *ptr;
 	if (!path)
-		path = ft_cd_home(*ptr, "HOME");
+		path = ft_find_var(*ptr, "HOME");
+	getcwd(oldpwd, sizeof(oldpwd));
 	if (chdir(path) == -1)
 	{
 		printerr(show, path);
 		return ;
 	}
+	getcwd(pwd, sizeof(pwd));
 	if (!(*ptr))
 		return ;
-	ft_changeoldpwd(head, path, ptr);
+	ft_changeoldpwd(head, pwd, oldpwd);
 }

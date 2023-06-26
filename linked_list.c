@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   linked_list.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: moelkama <moelkama@student.42.fr>          +#+  +:+       +#+        */
+/*   By: akatfi <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/27 12:38:33 by akatfi            #+#    #+#             */
-/*   Updated: 2023/05/27 13:28:27 by moelkama         ###   ########.fr       */
+/*   Updated: 2023/06/14 21:19:58 by akatfi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,4 +63,14 @@ int	ft_lstsize(t_list *lst)
 		i++;
 	}
 	return (i);
+}
+
+void	ft_cmd_error(t_list *linked_env, t_pipe *ptr)
+{
+	if (ft_find_var(linked_env, "PATH")
+		&& is_exist(ptr->cmd->cmd[0], '/') == -1)
+		ft_printf("%s: command not found\n", ptr->cmd->cmd[0]);
+	else
+		ft_printf("%s: No such file or directory\n", ptr->cmd->cmd[0]);
+	exit(127);
 }

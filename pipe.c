@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   pipe.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: moelkama <moelkama@student.42.fr>          +#+  +:+       +#+        */
+/*   By: akatfi <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/07 19:38:12 by moelkama          #+#    #+#             */
-/*   Updated: 2023/06/01 14:07:32 by moelkama         ###   ########.fr       */
+/*   Updated: 2023/06/12 13:30:24 by akatfi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -111,18 +111,18 @@ t_pipe	*get_pipes(char *line, char **env)
 	swp = new;
 	new = manage_symbol(new);
 	free(swp);
-	arr = ft_split(new, ' ');
+	arr = ft_split(new, " \t");
 	if (!quotes_error(new) || !pipe_error(arr) || !symbol_error(arr))
 		return (*g_status = -1, free(new), ft_free(arr), NULL);
 	pipe = here_doc(arr, env);
 	if (g_status[2] == 1)
-		return (free_pipes(&pipe), NULL);
+		return (free(new), ft_free(arr), free_pipes(&pipe, NULL, NULL), NULL);
 	get_files(pipe, arr, env, -1);
 	swp = new;
 	new = add_vars(new, env, 0, 0);
 	free(swp);
 	ft_free(arr);
-	arr = ft_split(new, ' ');
+	arr = ft_split(new, " \t");
 	get_commands(pipe, env, arr);
 	free(new);
 	ft_free(arr);

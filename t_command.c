@@ -6,7 +6,7 @@
 /*   By: akatfi <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/02 14:13:38 by akatfi            #+#    #+#             */
-/*   Updated: 2023/06/10 13:24:36 by akatfi           ###   ########.fr       */
+/*   Updated: 2023/06/15 14:34:36 by akatfi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,19 +36,12 @@ void	ft_env(char *cmd, t_list **linked_env, char **env, t_pipe *ptr)
 {
 	if (!ft_strcmp(cmd, "env"))
 	{
-		if (ptr->cmd->path)
-			ft_get_env(env, linked_env, 1);
-		else if (ptr->cmd->cmd[1])
+		if (ptr->cmd->cmd[1])
 		{
 			write(2, "env with no options or arguments\n", 34);
 			exit(127);
 		}
-		else
-		{
-			ft_printf("%s: No such file or directory\n",
-				ptr->cmd->cmd[0]);
-			exit(127);
-		}
+		ft_get_env(env, linked_env, 1);
 	}
 }
 
@@ -58,7 +51,9 @@ void	ft_exec_command(char *cmd, t_pipe *ptr, t_list **linked_env, char **env)
 	if (ft_check_builtin(cmd, ptr->cmd->cmd[0]))
 	{
 		ft_env(cmd, linked_env, env, ptr);
-		if (!ft_strcmp(cmd, "echo"))
+		if (!ft_strcmp("exit", ptr->cmd->cmd[0]))
+			ft_exit(ptr->cmd->cmd, 0);
+		else if (!ft_strcmp(cmd, "echo"))
 			ft_echo(ptr->cmd->cmd, ptr->cmd->cmd[1]);
 		else if (!ft_strcmp(cmd, "pwd"))
 			get_pwd();
@@ -72,10 +67,7 @@ void	ft_exec_command(char *cmd, t_pipe *ptr, t_list **linked_env, char **env)
 	else if (ptr->cmd->path && ptr->cmd->cmd[0])
 		execve(ptr->cmd->path, ptr->cmd->cmd, env);
 	else if (ptr->cmd->cmd[0] && !ptr->cmd->path)
-	{
-		ft_printf("%s: command not found\n", ptr->cmd->cmd[0]);
-		exit(127);
-	}
+		ft_cmd_error(*linked_env, ptr);
 	exit (0);
 }
 
@@ -83,6 +75,8 @@ void	ft_mainprocess(int len, t_list **linked_env, t_pipe *ptr, int *p)
 {
 	if (len == 1)
 	{
+		if (!ft_strcmp("exit", ptr->cmd->cmd[0]))
+			ft_exit(ptr->cmd->cmd, 1);
 		if (!ft_strcmp(ptr->cmd->cmd[0], "cd"))
 			ft_cd(ptr->cmd->cmd[1], linked_env, 0);
 		else if (!ft_strcmp(ptr->cmd->cmd[0], "unset"))
@@ -93,6 +87,10 @@ void	ft_mainprocess(int len, t_list **linked_env, t_pipe *ptr, int *p)
 	dup2(p[0], 0);
 	close(p[1]);
 	close(p[0]);
+	if (ptr->out >= 3)
+		close(ptr->out);
+	if (ptr->in >= 3)
+		close(ptr->in);
 }
 
 void	ft_multiple_cmd(t_pipe *ptr, char **env, t_list **linked_env)

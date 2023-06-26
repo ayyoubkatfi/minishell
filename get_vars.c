@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   get_vars.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: moelkama <moelkama@student.42.fr>          +#+  +:+       +#+        */
+/*   By: akatfi <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/07 12:38:39 by moelkama          #+#    #+#             */
-/*   Updated: 2023/06/01 13:59:01 by moelkama         ###   ########.fr       */
+/*   Updated: 2023/06/14 14:30:42 by akatfi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -120,6 +120,8 @@ char	*add_vars(char *line, char **env, int d, int s)
 	while (line && line[i])
 	{
 		manage_quotes(line, i, &d, &s);
+		if (is_exist(line, '|') < i && is_exist(line, '|') != -1)
+			*g_status = 0;
 		if (s == 0 && line[i] == '$' && ft_isnum(line[i + 1]))
 			i++;
 		else if (s == 0 && line[i] == '$' && is_valid(line[i + 1]))

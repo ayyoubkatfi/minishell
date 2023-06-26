@@ -6,13 +6,13 @@
 /*   By: akatfi <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/01 15:10:16 by moelkama          #+#    #+#             */
-/*   Updated: 2023/06/10 16:02:50 by akatfi           ###   ########.fr       */
+/*   Updated: 2023/06/14 23:00:19 by akatfi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-void	free_pipes(t_pipe **pipes)
+void	free_pipes(t_pipe **pipes, char **line, char **my_env)
 {
 	t_pipe	*ptr;
 	t_pipe	*swp;
@@ -32,9 +32,12 @@ void	free_pipes(t_pipe **pipes)
 		ptr = ptr->next;
 	}
 	free(swp);
+	if (line)
+		free(*line);
+	ft_free_env(my_env);
 }
 
-void	check_line(char *line)
+int	check_line(char *line, char **my_env)
 {
 	if (!line)
 	{
@@ -42,7 +45,13 @@ void	check_line(char *line)
 		exit (WEXITSTATUS(*g_status));
 	}
 	if (*line)
+	{
 		add_history(line);
+		return (1);
+	}
+	free(line);
+	ft_free_env(my_env);
+	return (0);
 }
 
 int	main(int c, char **v, char **env)
@@ -62,14 +71,11 @@ int	main(int c, char **v, char **env)
 		g_status[2] = 0;
 		my_env = ft_change_type(envp);
 		line = readline("minishell> ");
-		check_line(line);
+		if (!check_line(line, my_env))
+			continue ;
 		pipe = get_pipes(line, my_env);
-		if (pipe && !ft_strcmp("exit", pipe->cmd->cmd[0]))
-			ft_exit(pipe->cmd->cmd);
-		else if (pipe)
+		if (pipe)
 			ft_multiple_cmd(pipe, my_env, &envp);
-		free_pipes(&pipe);
-		free(line);
-		ft_free_env(my_env);
+		free_pipes(&pipe, &line, my_env);
 	}
 }

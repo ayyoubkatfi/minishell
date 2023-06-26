@@ -6,7 +6,7 @@
 /*   By: akatfi <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/03 16:27:57 by akatfi            #+#    #+#             */
-/*   Updated: 2023/06/09 21:54:01 by akatfi           ###   ########.fr       */
+/*   Updated: 2023/06/14 18:16:36 by akatfi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,7 +52,7 @@ int	check_if_exit(t_list *ptr, char *str)
 	return (0);
 }
 
-char	*ft_cd_home(t_list	*ptr, char *path)
+char	*ft_find_var(t_list	*ptr, char *path)
 {
 	t_list	*home;
 
@@ -74,6 +74,8 @@ void	wait_checksignal(int *std)
 {
 	dup2(std[0], 0);
 	dup2(std[1], 1);
+	close(std[0]);
+	close(std[1]);
 	waitpid(std[2], g_status, 0);
 	while (wait(NULL) != -1)
 		;

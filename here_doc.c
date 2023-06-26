@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   here_doc.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: moelkama <moelkama@student.42.fr>          +#+  +:+       +#+        */
+/*   By: akatfi <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/07 18:40:40 by moelkama          #+#    #+#             */
-/*   Updated: 2023/06/01 14:07:43 by moelkama         ###   ########.fr       */
+/*   Updated: 2023/06/15 19:37:39 by akatfi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -101,7 +101,11 @@ t_pipe	*here_doc(char **arr, char **env)
 	{
 		ptr = lastpipe(pipe);
 		if (!ft_strcmp(arr[i], "<<"))
+		{
 			ptr->in = read_doc(arr, env, i + 1);
+			if (ptr->in > 0)
+				ptr->here_doc = 1;
+		}
 		else if (!ft_strcmp(arr[i], "|"))
 			ptr->next = newpipe();
 		i++;

@@ -6,7 +6,7 @@
 /*   By: akatfi <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/05 15:53:51 by akatfi            #+#    #+#             */
-/*   Updated: 2023/06/09 21:53:30 by akatfi           ###   ########.fr       */
+/*   Updated: 2023/06/15 14:32:35 by akatfi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,7 +72,8 @@ int	ft_check_builtin(char *cmd, char *cmd1)
 		return (0);
 	if (!ft_strcmp(cmd, "env") || !ft_strcmp(cmd, "cd")
 		|| !ft_strcmp(cmd1, "unset") || !ft_strcmp(cmd, "pwd")
-		|| !ft_strcmp(cmd, "echo") || !ft_strcmp(cmd1, "export"))
+		|| !ft_strcmp(cmd, "echo") || !ft_strcmp(cmd1, "export")
+		|| !ft_strcmp(cmd1, "exit"))
 		return (1);
 	return (0);
 }

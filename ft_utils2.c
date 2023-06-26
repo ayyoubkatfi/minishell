@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_utils2.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: moelkama <moelkama@student.42.fr>          +#+  +:+       +#+        */
+/*   By: akatfi <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/28 15:06:22 by moelkama          #+#    #+#             */
-/*   Updated: 2023/06/01 14:10:05 by moelkama         ###   ########.fr       */
+/*   Updated: 2023/06/15 19:42:31 by akatfi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,4 +54,25 @@ int	check_qutes(char *limit)
 		limit++;
 	}
 	return (0);
+}
+
+int	if_exist(char *str, char c)
+{
+	int	i;
+
+	i = 0;
+	while (str[i])
+	{
+		if (str[i] == c)
+			return (1);
+		i++;
+	}
+	return (0);
+}
+
+t_pipe	*lastpipe(t_pipe *pipes)
+{
+	while (pipes && pipes->next)
+		pipes = pipes->next;
+	return (pipes);
 }

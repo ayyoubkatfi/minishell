@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   commands.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: moelkama <moelkama@student.42.fr>          +#+  +:+       +#+        */
+/*   By: akatfi <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/06 16:15:30 by moelkama          #+#    #+#             */
-/*   Updated: 2023/05/28 13:42:56 by moelkama         ###   ########.fr       */
+/*   Updated: 2023/06/15 12:14:39 by akatfi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,9 +57,12 @@ char	*findpath(char *envpath, char *cmd)
 	char	*cmd_path;
 	int		i;
 
-	if (access(cmd, X_OK) == 0)
+	if (access(cmd, X_OK) == 0 && (if_exist(cmd, '/')
+			|| envpath[ft_strlen(envpath) - 1] == ':'))
 		return (ft_link(cmd, NULL));
-	paths = ft_split(envpath, ':');
+	if (is_exist(cmd, '/') != -1)
+		return (NULL);
+	paths = ft_split(envpath, ":");
 	i = 0;
 	while (paths && paths[i])
 	{

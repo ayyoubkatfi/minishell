@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_splitline.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: moelkama <moelkama@student.42.fr>          +#+  +:+       +#+        */
+/*   By: akatfi <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/06 16:24:05 by moelkama          #+#    #+#             */
-/*   Updated: 2023/05/27 12:19:16 by moelkama         ###   ########.fr       */
+/*   Updated: 2023/06/12 15:21:41 by akatfi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,7 +40,7 @@ char	*returnstr(char *s, int start, int len)
 	return (NULL);
 }
 
-int	ft_count_strs(char *str, char c)
+int	ft_count_strs(char *str, char *c)
 {
 	int	count_strs;
 	int	d;
@@ -52,10 +52,10 @@ int	ft_count_strs(char *str, char c)
 	count_strs = 0;
 	while (str && *str)
 	{
-		while (*str && (s == 0 && d == 0 && *str == c))
+		while (*str && (s == 0 && d == 0 && if_exist(c, *str)))
 			str++;
 		m = 0;
-		while (*str && (s == 1 || d == 1 || *str != c))
+		while (*str && (s == 1 || d == 1 || !if_exist(c, *str)))
 		{
 			manage_quotes(str, 0, &d, &s);
 			m = 1;
@@ -78,7 +78,7 @@ char	**ft_free(char **strs)
 	return (NULL);
 }
 
-char	**ft_split(char *str, char c)
+char	**ft_split(char *str, char *c)
 {
 	char	**strs;
 	char	*ptr;
@@ -96,10 +96,10 @@ char	**ft_split(char *str, char c)
 	d = 0;
 	while (tab[0] < tab[1])
 	{
-		while (*str && *str == c)
+		while (*str && if_exist(c, *str))
 			str++;
 		ptr = str;
-		while (*str && (d == 1 || s == 1 || *str != c))
+		while (*str && (d == 1 || s == 1 || !if_exist(c, *str)))
 			manage_quotes(str++, 0, &d, &s);
 		strs[tab[0]++] = returnstr(ptr, 0, str - ptr);
 	}

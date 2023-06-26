@@ -6,7 +6,7 @@
 /*   By: akatfi <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/30 18:42:09 by akatfi            #+#    #+#             */
-/*   Updated: 2023/06/09 21:37:48 by akatfi           ###   ########.fr       */
+/*   Updated: 2023/06/15 20:17:47 by akatfi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -92,6 +92,8 @@ void	ft_export2(char **export, int show, t_list **ptr)
 			ft_lstadd_back(ptr, ft_lstnew(NULL, ft_alloc(export[i]), 0));
 		free(str);
 	}
+	if (j == 1 && export[i] == NULL)
+		exit(1);
 }
 
 void	ft_export(char **export, t_list **ptr, int show)
@@ -117,6 +119,4 @@ void	ft_export(char **export, t_list **ptr, int show)
 	}
 	else
 		ft_export2(export, show, ptr);
-	if (j == 1 && export[i] == NULL)
-		exit(1);
 }

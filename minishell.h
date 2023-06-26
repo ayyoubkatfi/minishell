@@ -6,7 +6,7 @@
 /*   By: akatfi <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/13 12:36:07 by akatfi            #+#    #+#             */
-/*   Updated: 2023/06/10 16:02:03 by akatfi           ###   ########.fr       */
+/*   Updated: 2023/06/15 19:34:50 by akatfi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,6 +36,7 @@ typedef struct s_pipe
 	t_command		*cmd;
 	int				in;
 	int				out;
+	int				here_doc;
 	struct s_pipe	*next;
 }					t_pipe;
 
@@ -53,7 +54,7 @@ int		ft_isnum(int c);
 int		ft_isalpha(int c);
 long	ft_atoi(const char *str);
 t_pipe	*get_pipes(char *line, char **env);
-void	free_pipes(t_pipe **pipes);
+void	free_pipes(t_pipe **pipes, char **line, char **my_env);
 t_pipe	*here_doc(char **arr, char **env);
 t_pipe	*newpipe(void);
 t_pipe	*lastpipe(t_pipe *pipes);
@@ -81,14 +82,12 @@ int		manage_quotes(char *line, int i, int *d, int *s);
 char	*manage_symbol(char *line);
 char	*manage_pipe(char *line);
 int		symbol_error(char **arr);
-int		count_newline(char *line);
-int		ft_count_strs(char *str, char c);
-char	**ft_split(char *str, char c);
+int		ft_count_strs(char *str, char *c);
+char	**ft_split(char *str, char *c);
 char	**ft_free(char **strs);
 char	*ft_link(char *s1, char *s2);
 int		ft_strncmp(char *s1, char *s2, int n);
 int		ft_strlen(char *str);
-int		arr_size(char **arr);
 int		is_exist(char *str, char c);
 void	ft_strncopy(char *dest, char *src, int n);
 int		ft_strcmp(char *s1, char *s2);
@@ -99,21 +98,19 @@ char	*ft_itoa(int n);
 void	rl_replace_line(const char *text, int clear_undo);
 int		ft_strcmp(char *str1, char *str2);
 void	ft_sortlist(t_list *ptr);
-char	*ft_search(char *str, char c);
 void	ft_echo(char **str, char *option);
 void	ft_get_env(char **env, t_list **ptr, int show);
 void	ft_export(char **export, t_list **ptr, int show);
 void	get_var_key(char *env, t_list **ptr, int show);
 int		ft_check_export(char *str);
 void	ft_cd(char *path, t_list **ptr, int sort);
-char	*delete_slash(char *str);
 char	*ft_delete_dirname(char *str);
 void	ft_unset(char **unset, t_list **ptr, int show);
 int		ft_check_echo(char *option);
 void	get_pwd(void);
 void	ft_printf(char *str, char *s);
 char	**ft_change_type(t_list *ptr);
-void	ft_exit(char **ext);
+void	ft_exit(char **ext, int show);
 char	*to_lowor(char *s1);
 char	*ft_alloc(char *str);
 void	ft_multiple_cmd(t_pipe *ptr, char **env, t_list **linked_env);
@@ -122,7 +119,7 @@ void	handel_ctrlc(int sig);
 void	ft_echo(char **str, char *option);
 int		check_if_exit(t_list *ptr, char *str);
 int		ft_check_unset(char *unset);
-char	*ft_cd_home(t_list	*ptr, char *path);
+char	*ft_find_var(t_list	*ptr, char *path);
 int		ft_check_export(char *str);
 char	*ft_strcat(char *s1, char *s2);
 char	*ft_return_str(char	*str);
@@ -138,5 +135,8 @@ void	add_or_create2(t_list *head, char *var, t_list **ptr, char *export);
 int		ft_check_ifadd(t_list **ptr, char *str);
 char	*ft_give_key(char *str);
 void	wait_checksignal(int *std);
+int		ft_check(char *str);
+int		if_exist(char *str, char c);
+void	ft_cmd_error(t_list *linked_env, t_pipe *ptr);
 
 #endif

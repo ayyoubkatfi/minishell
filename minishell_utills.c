@@ -6,7 +6,7 @@
 /*   By: akatfi <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/24 12:01:08 by akatfi            #+#    #+#             */
-/*   Updated: 2023/06/10 15:22:30 by akatfi           ###   ########.fr       */
+/*   Updated: 2023/06/15 19:00:53 by akatfi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,7 +52,7 @@ void	ft_sortlist(t_list *ptr)
 		head = ptr->next;
 		while (head)
 		{
-			if (ft_strcmp(ptr->var, head->var) > 0 && head->sort == 1)
+			if (ft_strcmp(ptr->var, head->var) > 0)
 			{
 				tmp1 = head->var;
 				tmp2 = head->key;
@@ -90,6 +90,8 @@ char	*ft_delete_dirname(char *str)
 	int		i;
 	char	*newpath;
 
+	if (!str)
+		return (NULL);
 	j = ft_strlen(str) - 1;
 	while (j > 0 && str[j] != '/')
 		j--;
@@ -98,14 +100,6 @@ char	*ft_delete_dirname(char *str)
 	while (++i < j)
 		newpath[i] = str[i];
 	newpath[i] = '\0';
-	if (j == 0)
-	{
-		if (newpath)
-			free(newpath);
-		newpath = malloc(2);
-		newpath[0] = '/';
-		newpath[1] = '\0';
-	}
 	if (str)
 		free(str);
 	return (newpath);
@@ -116,9 +110,9 @@ void	ft_remove2(t_list **ptr, char *unset)
 	t_list	*p;
 	t_list	*rm;
 
-	if (ft_strcmp((*ptr)->var, unset) == 0)
+	if ((*ptr) && ft_strcmp((*ptr)->var, unset) == 0)
 		ft_remove(ptr);
-	else
+	else if ((*ptr))
 	{
 		p = (*ptr);
 		while (p)
